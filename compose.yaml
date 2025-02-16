@@ -1,0 +1,35 @@
+﻿services:
+  shop:
+    image: shop
+    build:
+      context: .
+      dockerfile: shop/Dockerfile
+
+  postgres:
+    image: postgres:15-alpine # Используем образ PostgreSQL версии 15 на базе Alpine
+    container_name: postgres_container
+    restart: always
+    ports:
+      - "5432:5432" # Проброс порта 5432
+    environment:
+      POSTGRES_USER: postgres      # Имя пользователя PostgreSQL
+      POSTGRES_PASSWORD: postgres  # Пароль пользователя
+      POSTGRES_DB: cms        # Имя базы данных
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Сохранение данных в volume
+
+  pgadmin:
+    image: dpage/pgadmin4:latest # Образ pgAdmin
+    container_name: pgadmin_container
+    restart: always
+    ports:
+      - "5050:80" # Проброс порта для доступа к pgAdmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com # Email для входа в pgAdmin
+      PGADMIN_DEFAULT_PASSWORD: admin       # Пароль для входа в pgAdmin
+    depends_on:
+      - postgres # Указываем, что pgAdmin зависит от запуска PostgreSQL
+
+volumes:
+  postgres_data:
+    driver: local
