@@ -131,6 +131,13 @@ app.MapPost("/login", async ([FromBody] LoginRequest request, [FromServices] Use
     return Results.Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
 });
 
+app.MapPost("/logout", async ([FromServices] SignInManager<User> signInManager) =>
+{
+    await signInManager.SignOutAsync();
+    return Results.Ok(new { message = "Logged out successfully" });
+}).RequireAuthorization();
+
+
 // ------------
 // **PRODUCTS** 
 // ------------
